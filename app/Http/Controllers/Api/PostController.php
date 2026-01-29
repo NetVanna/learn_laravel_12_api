@@ -15,8 +15,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        // Use with('author') to prevent N+1 query issues since the Resource loads the author
-        $posts = Post::with('author')->get();
+        $user = auth()->user();
+        $posts = Post::with('author')->where('author_id', $user->id)->get();
 
         return response()->json([
             "data" => PostResource::collection($posts),
@@ -30,9 +30,7 @@ class PostController extends Controller
     {
         $data = $request->validated();
 
-        // Ensure you handle the case where the user might not be authenticated if this is a public API
-        // For now, hardcoding as you had it
-        $data["author_id"] = 1;
+        $data["author_id"] = auth()->user()->id;
 
         $post = Post::create($data);
 
@@ -47,7 +45,8 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        $post = Post::with('author')->find($id);
+        $user = auth()->user();
+        $post = Post::with('author')->where('author_id', $user->id)->find($id);
 
         if (!$post) {
             return response()->json([
@@ -65,7 +64,8 @@ class PostController extends Controller
      */
     public function update(PostRequest $request, $id)
     {
-        $post = Post::find($id);
+        $user = auth()->user();
+        $post = Post::with('author')->where('author_id', $user->id)->find($id);
 
         if (!$post) {
             return response()->json([
@@ -88,7 +88,8 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        $post = Post::find($id);
+        $user = auth()->user();
+        $post = Post::with('author')->where('author_id', $user->id)->find($id);
 
         if (!$post) {
             return response()->json([
