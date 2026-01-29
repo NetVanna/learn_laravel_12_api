@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ImageGenerationController;
 use App\Http\Controllers\Api\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -11,6 +12,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return $request->user();
     });
     Route::apiResource('posts', PostController::class);
+    Route::apiResource('image-generations', ImageGenerationController::class)->only(['index', 'store']);
 });
 
 require __DIR__ . '/auth.php';
